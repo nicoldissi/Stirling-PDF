@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: stirling-pdf-custom # Choisissez un nom pour votre service sur Render (personnalisé)
+    name: stirling-pdf-custom  # Choisissez un nom pour votre service sur Render (personnalisé)
     dockerfilePath: Dockerfile
     port: 8080
     healthCheckPath: /  #  Chemin pour le health check (peut être ajusté si nécessaire)
