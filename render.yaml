@@ -1,19 +1,15 @@
 services:
   - type: web
     name: stirling-pdf
-    env: docker
-    plan: free
-    region: frankfurt
-    dockerfilePath: Dockerfile
-    autoDeploy: true
-    healthCheckPath: /health
+    dockerfile: Dockerfile
+    plan: free # ou 'starter'/'professional' selon vos besoins
     envVars:
-      - key: DOCKER_ENABLE_SECURITY
-        value: "false"  # Désactive les vérifications de sécurité Docker
       - key: VERSION_TAG
-        value: "0.39.0"  # Version fixe pour la compatibilité
-      - key: INSTALL_BOOK_AND_ADVANCED_HTML
-        value: "true"  # Active les fonctionnalités supplémentaires
-    buildCommand: |
-      docker build -t stirling-pdf . 
-    dockerCommand: /usr/src/app/run.sh --port 8080
+        value: your_version_here # Remplacez par votre version (ex: v1.0.0)
+      - key: DOCKER_ENABLE_SECURITY
+        value: "false"
+      - key: ENDPOINTS_GROUPS_TO_REMOVE
+        value: "CLI"
+    build:
+      args:
+        VERSION_TAG: ${VERSION_TAG}
