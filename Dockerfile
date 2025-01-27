@@ -28,9 +28,11 @@ COPY pipeline /pipeline
 FROM gradle:7.3.3-jdk11 as builder
 WORKDIR /home/gradle/project
 COPY . .
-RUN gradle build --no-daemon
 
-# Étape 2 : Image finale minimaliste
+# On désactive la watch Gradle
+RUN gradle build --no-daemon -Dorg.gradle.unsafe.watch-fs=false
+
+# Étape 2 : Image finale
 FROM alpine:3.21.2
 COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
 # le reste de tes instructions...
