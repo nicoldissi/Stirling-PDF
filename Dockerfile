@@ -25,12 +25,10 @@ COPY scripts/installFonts.sh /scripts/installFonts.sh
 COPY pipeline /pipeline
 
 # Étape 1 : Build
-FROM gradle:7.3.3-jdk11 as builder
+FROM gradle:8-jdk17 as builder
 WORKDIR /home/gradle/project
 COPY . .
-
-# On désactive la watch Gradle
-RUN gradle build --no-daemon -Dorg.gradle.unsafe.watch-fs=false
+RUN ./gradlew build --no-daemon -Dorg.gradle.unsafe.watch-fs=false
 
 # Étape 2 : Image finale
 FROM alpine:3.21.2
