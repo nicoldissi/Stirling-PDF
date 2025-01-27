@@ -1,9 +1,9 @@
 services:
   - type: web
     name: stirling-pdf
-    env: docker
-    plan: free  # Changer pour 'starter' ou 'standard' pour la production
-    region: frankfurt  # Choisir la région souhaitée
+    runtime: docker  # Utilisez runtime: docker pour spécifier un déploiement Docker
+    plan: free # Changer pour 'starter' ou 'standard' pour la production
+    region: frankfurt # Choisir la région souhaitée
     dockerfilePath: Dockerfile
     autoDeploy: true
     port: 8080
@@ -13,4 +13,4 @@ services:
         value: production
       # Ajouter d'autres variables si nécessaire (ex: API keys, configurations)
       # - key: ALLOWED_FILE_SIZES
-      #   value: "25"
+      # - value: "25"
