@@ -1,51 +1,14 @@
-FROM alpine:3.21.2@sha256:56fa17d2a7e7f168a043a2712e63aed1f8543aeafdcee47c58dcffe38ed51099
+FROM frooodle/s-pdf:0.39.0
 
-ARG VERSION_TAG
+# Définit le répertoire de travail explicite
+WORKDIR /usr/src/app
 
-# Set Environment Variables
-ENV DOCKER_ENABLE_SECURITY=false \
-    HOME=/home/stirlingpdfuser \
-    VERSION_TAG=$VERSION_TAG \
-    JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -XX:MaxRAMPercentage=75" \
-    PUID=1000 \
-    PGID=1000 \
-    UMASK=022
+# Vérifie que le script existe et corrige les permissions
+RUN chmod +x ./run.sh && \
+    chown -R 1000:1000 /usr/src/app
 
-# Copy necessary files
-COPY scripts/download-security-jar.sh /scripts/download-security-jar.sh
-COPY scripts/init-without-ocr.sh /scripts/init-without-ocr.sh
-COPY scripts/installFonts.sh /scripts/installFonts.sh
-COPY scripts/run.sh /scripts/run.sh**  # Ajout : Copie de run.sh
-COPY pipeline /pipeline
-COPY build/libs/*.jar app.jar
+# Port exposé (doit correspondre au port interne de l'application)
+EXPOSE 8080
 
-# Set up necessary directories and permissions
-RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/main" | tee -a /etc/apk/repositories && \
-    echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/community" | tee -a /etc/apk/repositories && \
-    echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" | tee -a /etc/apk/repositories && \
-    apk upgrade --no-cache -a && \
-    apk add --no-cache \
-        ca-certificates \
-        tzdata \
-        tini \
-        bash \
-        curl \
-        shadow \
-        su-exec \
-        openjdk21-jre && \
-    # User permissions
-    mkdir -p /configs /logs /customFiles /usr/share/fonts/opentype/noto && \
-    chmod +x /scripts/*.sh && \
-    **chmod +x /scripts/run.sh &&** # Ajout : Rend run.sh exécutable
-    addgroup -S stirlingpdfgroup && adduser -S stirlingpdfuser -G stirlingpdfgroup && \
-    chown -R stirlingpdfuser:stirlingpdfgroup $HOME /scripts  /configs /customFiles /pipeline && \
-    chown stirlingpdfuser:stirlingpdfgroup /app.jar
-
-# Set environment variables
-ENV ENDPOINTS_GROUPS_TO_REMOVE=CLI
-
-EXPOSE 8080/tcp
-
-# Run the application
-ENTRYPOINT ["tini", "--", "/scripts/init-without-ocr.sh"]
-CMD ["java", "-Dfile.encoding=UTF-8", "-jar", "/app.jar"]
+# Commande d'exécution avec chemin absolu
+CMD ["/usr/src/app/run.sh"]
