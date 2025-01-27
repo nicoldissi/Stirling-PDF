@@ -1,0 +1,12 @@
+services:
+  - name: stirling-pdf
+    type: web
+    env: docker
+    region: frankfurt  # ou "oregon", selon vos besoins
+    plan: free         # ou "starter", etc.
+    dockerfilePath: ./Dockerfile
+    # Le service effectue une requête HTTP GET sur / pour vérifier si l’appli est en bonne santé
+    healthCheckPath: /
+    envVars:
+      - key: STIRLING_PDF_VERSION
+        value: "0.1.5"
