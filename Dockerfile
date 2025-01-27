@@ -23,7 +23,17 @@ COPY scripts/download-security-jar.sh /scripts/download-security-jar.sh
 COPY scripts/init-without-ocr.sh /scripts/init-without-ocr.sh
 COPY scripts/installFonts.sh /scripts/installFonts.sh
 COPY pipeline /pipeline
-COPY build/libs/*.jar /app.jar
+
+# Étape 1 : Build
+FROM gradle:7.3.3-jdk11 as builder
+WORKDIR /home/gradle/project
+COPY . .
+RUN gradle build --no-daemon
+
+# Étape 2 : Image finale minimaliste
+FROM alpine:3.21.2
+COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
+# le reste de tes instructions...
 
 # Set up necessary directories and permissions
 RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/main" | tee -a /etc/apk/repositories && \
