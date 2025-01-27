@@ -61,5 +61,5 @@ ENV ENDPOINTS_GROUPS_TO_REMOVE=CLI
 EXPOSE 8080/tcp
 
 # Run the application
-ENTRYPOINT ["tini", "--", "/scripts/init-without-ocr.sh"]
+ENTRYPOINT ["/scripts/init-without-ocr.sh"]
 CMD ["java", "-Dfile.encoding=UTF-8", "-jar", "/app.jar"]
