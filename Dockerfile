@@ -1,6 +1,14 @@
-# use alpine
-FROM alpine:3.21.2@sha256:56fa17d2a7e7f168a043a2712e63aed1f8543aeafdcee47c58dcffe38ed51099
 
+
+
+# Étape 1 : Build
+FROM gradle:8-jdk17 as builder
+WORKDIR /home/gradle/project
+COPY . .
+RUN ./gradlew build --no-daemon -Dorg.gradle.unsafe.watch-fs=false
+
+# Étape 2 : Image finale
+FROM alpine:3.21.2
 ARG VERSION_TAG
 
 # Set Environment Variables
@@ -18,22 +26,13 @@ ENV DOCKER_ENABLE_SECURITY=false \
     PGID=1000 \
     UMASK=022
 
+COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
+# le reste de tes instructions...
 # Copy necessary files
 COPY scripts/download-security-jar.sh /scripts/download-security-jar.sh
 COPY scripts/init-without-ocr.sh /scripts/init-without-ocr.sh
 COPY scripts/installFonts.sh /scripts/installFonts.sh
 COPY pipeline /pipeline
-
-# Étape 1 : Build
-FROM gradle:8-jdk17 as builder
-WORKDIR /home/gradle/project
-COPY . .
-RUN ./gradlew build --no-daemon -Dorg.gradle.unsafe.watch-fs=false
-
-# Étape 2 : Image finale
-FROM alpine:3.21.2
-COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
-# le reste de tes instructions...
 
 # Set up necessary directories and permissions
 RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/main" | tee -a /etc/apk/repositories && \
