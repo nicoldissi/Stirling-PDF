@@ -15,7 +15,7 @@ ENV DOCKER_ENABLE_SECURITY=false \
 COPY scripts/download-security-jar.sh /scripts/download-security-jar.sh
 COPY scripts/init-without-ocr.sh /scripts/init-without-ocr.sh
 COPY scripts/installFonts.sh /scripts/installFonts.sh
-**COPY scripts/run.sh /scripts/run.sh**  # Ajout : Copie de run.sh
+COPY scripts/run.sh /scripts/run.sh**  # Ajout : Copie de run.sh
 COPY pipeline /pipeline
 COPY build/libs/*.jar app.jar
 
