@@ -1,15 +1,19 @@
 services:
   - type: web
     name: stirling-pdf
-    runtime: docker  # Utilisez runtime: docker pour spécifier un déploiement Docker
-    plan: free # Changer pour 'starter' ou 'standard' pour la production
-    region: frankfurt # Choisir la région souhaitée
+    env: docker
+    plan: free
+    region: frankfurt
     dockerfilePath: Dockerfile
     autoDeploy: true
     healthCheckPath: /health
     envVars:
-      - key: APP_ENVIRONMENT
-        value: production
-      # Ajouter d'autres variables si nécessaire (ex: API keys, configurations)
-      # - key: ALLOWED_FILE_SIZES
-      # - value: "25"
+      - key: DOCKER_ENABLE_SECURITY
+        value: "false"  # Désactive les vérifications de sécurité Docker
+      - key: VERSION_TAG
+        value: "0.39.0"  # Version fixe pour la compatibilité
+      - key: INSTALL_BOOK_AND_ADVANCED_HTML
+        value: "true"  # Active les fonctionnalités supplémentaires
+    buildCommand: |
+      docker build -t stirling-pdf . 
+    dockerCommand: /usr/src/app/run.sh --port 8080
