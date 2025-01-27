@@ -6,7 +6,6 @@ services:
     region: frankfurt # Choisir la région souhaitée
     dockerfilePath: Dockerfile
     autoDeploy: true
-    port: 8080
     healthCheckPath: /health
     envVars:
       - key: APP_ENVIRONMENT
