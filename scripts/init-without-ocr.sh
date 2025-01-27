@@ -29,7 +29,7 @@ echo "Setting permissions and ownership for necessary directories..."
 if chown -R stirlingpdfuser:stirlingpdfgroup $HOME /logs /scripts /usr/share/fonts/opentype/noto /configs /customFiles /pipeline /app.jar; then
 	chmod -R 755 /logs /scripts /usr/share/fonts/opentype/noto /configs /customFiles /pipeline /app.jar || true
     # If chown succeeds, execute the command as stirlingpdfuser
-    exec stirlingpdfuser "$@"
+    exec "$@"
 else
     # If chown fails, execute the command without changing the user context
     echo "[WARN] Chown failed, running as host user"
